@@ -15,3 +15,16 @@ class Store:
                 self.products.remove(product)
                 return True
         return False    
+    def get_product_by_id(self, product_id):
+        for product in self.products:
+            if product.id == product_id:
+                return product
+        return None
+    def update_product(self, product_id, new_data):
+        for product in self.products:
+            if product.id == product_id:
+                product.name = new_data.name
+                product.price = new_data.price
+                product.stock = new_data.stock
+                return product
+        return None

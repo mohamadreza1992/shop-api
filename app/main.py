@@ -22,3 +22,15 @@ def delete_products(product_id:int):
      if result:
         return {"message": "Deleted successfully"}
      return {"message": "Product not found"}
+@app.get("/products/{product_id}")
+def get_product(product_id: int):
+    product = store.get_product_by_id(product_id)
+    if product:
+        return product
+    return {"message": "Product not found"}
+@app.put("/products/{product_id}")
+def update_product(product_id: int, product: ProductCreate):
+    updated = store.update_product(product_id, product)
+    if updated:
+        return {"message": "Updated successfully", "product": updated}
+    return {"message": "Product not found"}
