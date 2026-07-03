@@ -16,3 +16,9 @@ def create_product(product: ProductCreate):
 @app.get("/products")
 def list_products():
     return store.get_products()
+@app.delete("/products/{product_id}")
+def delete_products(product_id:int):
+     result = store.delete_product(product_id)
+     if result:
+        return {"message": "Deleted successfully"}
+     return {"message": "Product not found"}
