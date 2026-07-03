@@ -13,3 +13,6 @@ def home():
 def create_product(product: ProductCreate):
     store.add_product(product)
     return {"message": "Product added successfully"}
+@app.get("/products")
+def list_products():
+    return store.get_products()
