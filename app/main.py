@@ -1,36 +1,8 @@
 from fastapi import FastAPI
-from app.schemas import ProductCreate
-from app.store import Store
+from app.routers.products import router as products_router
 
-app= FastAPI()
-store=Store()
+app = FastAPI(title="Shop API")
 
-@app.get("/")
-def home():
-    return{"message":"first routh "}
 
-@app.post("/products")
-def create_product(product: ProductCreate):
-    store.add_product(product)
-    return {"message": "Product added successfully"}
-@app.get("/products")
-def list_products():
-    return store.get_products()
-@app.delete("/products/{product_id}")
-def delete_products(product_id:int):
-     result = store.delete_product(product_id)
-     if result:
-        return {"message": "Deleted successfully"}
-     return {"message": "Product not found"}
-@app.get("/products/{product_id}")
-def get_product(product_id: int):
-    product = store.get_product_by_id(product_id)
-    if product:
-        return product
-    return {"message": "Product not found"}
-@app.put("/products/{product_id}")
-def update_product(product_id: int, product: ProductCreate):
-    updated = store.update_product(product_id, product)
-    if updated:
-        return {"message": "Updated successfully", "product": updated}
-    return {"message": "Product not found"}
+# Router injection
+app.include_router(products_router)
