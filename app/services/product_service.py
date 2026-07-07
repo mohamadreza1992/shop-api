@@ -1,40 +1,77 @@
-from app.schemas.products import ProductCreate
+from sqlalchemy.orm import Session
+
+from app.models.product import Product
+from app.schemas.product import ProductCreate
 
 
 class ProductService:
-    def __init__(self):
-        self.products = []
-        self.counter = 1
 
-    def add_product(self, product: ProductCreate):
-        new_product = product.model_dump()
-        new_product["id"] = self.counter
-        self.counter += 1
+    def add_product(self, db: Session, product: ProductCreate):
 
-        self.products.append(new_product)
+        new_product = Product(
+            name=product.name,
+            price=product.price,
+            stock=product.stock
+        )
+
+        db.add(new_product)
+        db.commit()
+        db.refresh(new_product)
+
         return new_product
 
-    def get_products(self):
-        return self.products
 
-    def get_product_by_id(self, product_id: int):
-        for product in self.products:
-            if product["id"] == product_id:
-                return product
-        return None
+    def get_products(self, db: Session):
 
-    def delete_product(self, product_id: int):
-        for product in self.products:
-            if product["id"] == product_id:
-                self.products.remove(product)
-                return True
+        return db.query(Product).all()
+
+
+    def get_product_by_id(self, db: Session, product_id: int):
+
+        return (
+            db.query(Product)
+            .filter(Product.id == product_id)
+            .first()
+        )
+
+
+    def delete_product(self, db: Session, product_id: int):
+
+        product = (
+            db.query(Product)
+            .filter(Product.id == product_id)
+            .first()
+        )
+
+        if product:
+            db.delete(product)
+            db.commit()
+            return True
+
         return False
 
-    def update_product(self, product_id: int, product_data: ProductCreate):
-        for product in self.products:
-            if product["id"] == product_id:
-                product["name"] = product_data.name
-                product["price"] = product_data.price
-                product["stock"] = product_data.stock
-                return product
+
+    def update_product(
+        self,
+        db: Session,
+        product_id: int,
+        product_data: ProductCreate
+    ):
+
+        product = (
+            db.query(Product)
+            .filter(Product.id == product_id)
+            .first()
+        )
+
+        if product:
+            product.name = product_data.name
+            product.price = product_data.price
+            product.stock = product_data.stock
+
+            db.commit()
+            db.refresh(product)
+
+            return product
+
         return None
