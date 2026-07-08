@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from .config import settings
 
 
-DATABASE_URL = "postgresql://shop_user:123456@localhost:5432/shop"
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(settings.DATABASE_URL)
 
 
 SessionLocal = sessionmaker(
@@ -25,3 +25,4 @@ def get_db():
 
     finally:
         db.close()
+
