@@ -16,7 +16,7 @@ class Product(Base):
         ForeignKey("categories.id")
     )
     category= relationship(
-        "category",
+        "Category",
         back_populates="products"
     )
 

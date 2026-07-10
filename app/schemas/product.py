@@ -1,9 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from app.schemas.category import CategoryResponse
+
 
 class ProductCreate(BaseModel):
     name: str
     price: float
     stock: int
+    category_id: int
 
 
 class ProductResponse(BaseModel):
@@ -11,14 +14,18 @@ class ProductResponse(BaseModel):
     name: str
     price: float
     stock: int
+    category: CategoryResponse | None = None
 
-    class Config:
-        from_attributes = True    
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
 
 class MessageResponse(BaseModel):
     message: str
 
+
 class ProductUpdate(BaseModel):
     name: str | None = None
     price: float | None = None
-    stock: int | None = None    
+    stock: int | None = None
