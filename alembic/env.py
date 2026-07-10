@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 from app.database.base import Base
-from app.models import product
+from app.models import product, Category
 from app.core.config import settings
 
 # this is the Alembic Config object, which provides

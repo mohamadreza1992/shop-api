@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Numeric
+from sqlalchemy import Column, Integer, String, Numeric,ForeignKey
+from sqlalchemy.orm import relationship
 from app.database.base import Base
 
 
@@ -10,5 +11,13 @@ class Product(Base):
     price = Column(Numeric(10, 2), nullable=False)
     stock = Column(Integer, default=0)
     
+    category_id=Column(
+        Integer,
+        ForeignKey("categories.id")
+    )
+    category= relationship(
+        "category",
+        back_populates="products"
+    )
 
     
