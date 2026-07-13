@@ -1,4 +1,5 @@
 from sqlalchemy import Integer,String,Column,DateTime
+from sqlalchemy.orm import relationship
 from datetime import datetime, UTC
 from app.database.base import Base
 
@@ -10,3 +11,11 @@ class User(Base):
     email=Column(String(255),nullable=False,unique=True,index=True)
     created_at=Column(DateTime(timezone=True),nullable=False,default=lambda :datetime.now(UTC))
     hashed_password=Column(String(255),nullable=False)
+
+
+    cart = relationship(
+        "Cart",
+        back_populates="user",
+        cascade="all, delete-orphan",
+            uselist=False
+    )

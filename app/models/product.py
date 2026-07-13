@@ -20,4 +20,9 @@ class Product(Base):
         back_populates="products"
     )
 
+    cart_items = relationship(
+    "CartItem",
+    back_populates="product"
+    )
+
     
