@@ -26,3 +26,7 @@ class Product(Base):
     )
 
     
+    order_items= relationship(
+        "OrderItem",
+        back_populates="product"
+    )
