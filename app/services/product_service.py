@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.product import Product
 from app.schemas.product import ProductCreate
+from decimal import Decimal
 
 
 def create_product(
@@ -22,9 +23,55 @@ def create_product(
     return new_product
 
 
-def get_products(db: Session):
+def get_products(
+    db: Session,
+    page: int,
+    limit: int,
+    search: str | None = None,
+    category_id: int | None = None,
+    min_price: Decimal | None = None,
+    max_price: Decimal | None = None
+):
 
-    return db.query(Product).all()
+    query = db.query(Product)
+
+    if search:
+        query = query.filter(
+            Product.name.ilike(f"%{search}%")
+        )
+
+    if category_id:
+        query = query.filter(
+            Product.category_id == category_id
+        )    
+
+    if min_price is not None:
+        query = query.filter(
+            Product.price >= min_price
+        )
+
+    if max_price is not None:
+        query = query.filter(
+            Product.price <= max_price
+        )    
+
+    total = query.count()
+
+    offset = (page - 1) * limit
+
+    products = (
+        query
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+    return {
+        "items": products,
+        "total": total,
+        "page": page,
+        "limit": limit
+    }
 
 
 def get_product(

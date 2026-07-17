@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from app.schemas.category import CategoryResponse
-
+from typing import List
 
 class ProductCreate(BaseModel):
     name: str
@@ -29,3 +29,10 @@ class ProductUpdate(BaseModel):
     name: str | None = None
     price: float | None = None
     stock: int | None = None
+
+
+class ProductListResponse(BaseModel):
+    items:List[ProductResponse]
+    total: int
+    page: int
+    limit: int    

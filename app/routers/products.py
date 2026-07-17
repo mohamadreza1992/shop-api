@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends,HTTPException
+from decimal import Decimal
+from fastapi import APIRouter, Depends,HTTPException,Query
 from sqlalchemy.orm import Session
 
 from app.dependencies.db import get_db
-from app.schemas.product import ProductCreate , ProductResponse,MessageResponse,ProductUpdate
+from app.schemas.product import ProductCreate , ProductResponse,MessageResponse,ProductUpdate,ProductListResponse
 from app.services import product_service
 
 router = APIRouter(
@@ -18,13 +19,29 @@ def create_product(
 ):
     return product_service.create_product(db, product)
 
-@router.get("/",
-            response_model=list[ProductResponse]
-            )
+@router.get(
+    "/",
+    response_model=ProductListResponse
+)
 def get_products(
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=100),
+    search: str | None = None,
+    category_id:int | None=None,
+    min_price: Decimal | None = Query(None,ge=0),
+    max_price: Decimal | None = Query(None,ge=0),
     db: Session = Depends(get_db)
+
 ):
-    return product_service.get_products(db)
+    return product_service.get_products(
+        db,
+        page,
+        limit,
+        search,
+        category_id,
+        min_price,
+        max_price
+    )
 
 
 @router.get("/{product_id}", 
