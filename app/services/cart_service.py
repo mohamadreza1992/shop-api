@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
 
 from app.models.cart import Cart
 from app.models.cart_item import CartItem
@@ -7,6 +6,7 @@ from app.models.product import Product
 from app.models.user import User
 
 from app.schemas.cart_item import CartItemCreate,CartItemUpdate
+from app.core.errors import product_not_found,cart_not_found,cart_item_not_found
 
 
 def get_or_create_cart(
@@ -48,11 +48,7 @@ def add_item_to_cart(
     ).first()
 
     if not product:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found"
-        )
-
+        product_not_found()
 
 
     cart_item = db.query(CartItem).filter(
@@ -90,10 +86,7 @@ def get_user_cart(
     ).first()
 
     if not cart:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Cart not found"
-        )
+       cart_not_found()
 
     return cart
 
@@ -113,11 +106,7 @@ def remove_cart_item(
 
 
     if not cart_item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Cart item not found"
-        )
-
+       cart_item_not_found()
 
     db.delete(cart_item)
     db.commit()
@@ -143,10 +132,7 @@ def update_cart_item(
 
 
     if not cart_item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Cart item not found"
-        )
+       cart_item_not_found()
 
 
     cart_item.quantity = data.quantity

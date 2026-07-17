@@ -1,16 +1,23 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,ConfigDict,Field
 
 
 class CategoryCreate(BaseModel):
-    name: str
+    name: str =Field(min_length=2,max_length=50)
 
+class CategoryUpdate(BaseModel):
 
+    name: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=50
+    )
 class CategoryResponse(BaseModel):
     id: int
     name: str
 
-    class Config:
-        from_attributes = True
+    model_config=ConfigDict(
+        from_attributes=True
+    )
 
 
 class MessageResponse(BaseModel):

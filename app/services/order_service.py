@@ -5,7 +5,7 @@ from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.user import User
 from app.models.product import Product
-
+from app.core.errors import order_not_found ,cart_empty,cart_not_found
 
 
 
@@ -19,17 +19,11 @@ def create_order(
     ).first()
 
     if not cart:
-        raise HTTPException(
-            status_code=404,
-            detail="Cart not found"
-        )
-    
+      cart_not_found()
+
     if not cart.items:
-            raise HTTPException(
-            status_code=400,
-            detail="Cart is empty"
-        )
-    
+        cart_empty()
+
     order = Order(
         user_id=user.id,
         status="pending"
@@ -99,9 +93,6 @@ def get_order_by_id(
     ).first()
 
     if not order:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Order not found"
-        )
+        order_not_found()
 
     return order
