@@ -6,244 +6,347 @@ This project implements a complete shopping workflow including authentication, p
 
 ---
 
-## Features
+# Features
 
-### Authentication
-- User registration
-- User login with JWT
-- Password hashing
-- Current user profile
-- Role based authorization
-- Admin protected routes
+## Authentication
 
-### Products
-- Create products
-- Update products
-- Delete products
-- Product listing
-- Pagination
-- Search
-- Category filtering
-- Price filtering
+* User registration
+* User login with JWT
+* Password hashing
+* Current user profile
+* Role-based authorization
+* Admin protected routes
 
-### Categories
-- Create categories
-- List categories
-- Get category details
-- Delete categories
+## Products
 
-### Shopping Cart
-- Create user cart
-- Add items
-- Update quantity
-- Remove items
-- View cart
+* Create products
+* Update products
+* Delete products
+* Product listing
+* Pagination
+* Search
+* Category filtering
+* Price filtering
 
-### Orders
-- Create order from cart
-- View user orders
-- Get order details
-- Order status management
+## Categories
 
-### Payments
-- Create payment
-- Payment status handling
-- Update order after payment
+* Create categories
+* List categories
+* Get category details
+* Delete categories
 
----
+## Shopping Cart
 
-## Tech Stack
+* Create user cart
+* Add items
+* Update quantity
+* Remove items
+* View cart
 
-- Python 3.12
-- FastAPI
-- SQLAlchemy 2.0
-- PostgreSQL
-- Alembic
-- Pydantic v2
-- JWT Authentication
-- Pytest
+## Orders
+
+* Create order from cart
+* View user orders
+* Get order details
+* Order status management
+
+## Payments
+
+* Create payment
+* Payment status handling
+* Update order after payment
 
 ---
 
-## Project Structure
+# Tech Stack
 
-    app/
-    ├── core/
-    ├── database/
-    ├── dependencies/
-    ├── models/
-    ├── schemas/
-    ├── services/
-    ├── routers/
-    └── main.py
-
-    tests/
+* Python 3.12
+* FastAPI
+* SQLAlchemy 2.0
+* PostgreSQL 16
+* Alembic
+* Pydantic v2
+* JWT Authentication
+* Pytest
+* Docker
+* Docker Compose
 
 ---
 
-## Installation
+# Project Structure
+
+```
+app/
+├── core/
+├── database/
+├── dependencies/
+├── models/
+├── schemas/
+├── services/
+├── routers/
+└── main.py
+
+tests/
+
+alembic/
+docker-compose.yml
+Dockerfile
+```
+
+---
+
+# Running With Docker (Recommended)
+
+Make sure Docker is installed.
 
 Clone repository:
 
-    git clone <repository-url>
+```bash
+git clone <repository-url>
+```
+
+Create environment file:
+
+```bash
+cp .env.example .env
+```
+
+Configure your database and application settings inside `.env`.
+
+Build and start containers:
+
+```bash
+docker compose up --build
+```
+
+Run in background:
+
+```bash
+docker compose up -d
+```
+
+The API will be available at:
+
+```
+http://localhost:8000
+```
+
+Swagger documentation:
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+# Docker Commands
+
+Stop containers:
+
+```bash
+docker compose down
+```
+
+Stop and remove database volume:
+
+```bash
+docker compose down -v
+```
+
+View running containers:
+
+```bash
+docker ps
+```
+
+View logs:
+
+```bash
+docker compose logs
+```
+
+---
+
+# Environment Variables
+
+Create `.env` file:
+
+```
+DATABASE_URL=postgresql://username:password@postgres:5432/shop
+
+TEST_DATABASE_URL=postgresql://username:password@postgres:5432/shop_test_db
+
+SECRET_KEY=your_secret_key
+
+ALGORITHM=HS256
+
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
+
+---
+
+# Database Migration
+
+Run migrations:
+
+```bash
+docker compose exec api alembic upgrade head
+```
+
+---
+
+# Local Installation (Without Docker)
 
 Create virtual environment:
 
-    python -m venv .venv
+```bash
+python -m venv .venv
+```
 
 Activate:
 
 Linux:
 
-    source .venv/bin/activate
+```bash
+source .venv/bin/activate
+```
 
 Install dependencies:
 
-    pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
+
+Run application:
+
+```bash
+uvicorn app.main:app --reload
+```
 
 ---
 
-## Environment Variables
+# Testing
 
-Create `.env` file:
+Run tests inside Docker:
 
-    DATABASE_URL=postgresql://username:password@localhost/shop
+```bash
+docker compose exec api pytest
+```
 
-    TEST_DATABASE_URL=postgresql://username:password@localhost/shop_test_db
+Run locally:
 
-    SECRET_KEY=your_secret_key
-
-    ALGORITHM=HS256
-
-    ACCESS_TOKEN_EXPIRE_MINUTES=30
-
----
-
-## Database Migration
-
-Run:
-
-    alembic upgrade head
-
----
-
-## Run Application
-
-Start server:
-
-    uvicorn app.main:app --reload
-
-Swagger documentation:
-
-    http://localhost:8000/docs
-
----
-
-## Testing
-
-Run tests:
-
-    pytest
-
-Run coverage:
-
-    pytest --cov=app
+```bash
+pytest
+```
 
 Current status:
 
-    25 tests passed
-    90% coverage
+```
+25 tests passed
+```
 
 ---
 
-## Architecture
+# Architecture
 
-This project uses layered architecture:
+This project follows a layered architecture:
 
-    Router
-       |
-       |
-    Service
-       |
-       |
-    Model
-       |
-       |
-    Database
+```
+Router
+   |
+Service
+   |
+Model
+   |
+Database
+```
 
+### Router
 
-Router:
 Handles HTTP requests and responses.
 
-Service:
-Contains business logic.
+### Service
 
-Model:
+Contains business logic and application rules.
+
+### Model
+
 Represents database tables.
 
-Schema:
-Validates input and output data.
+### Schema
+
+Handles request validation and response serialization.
 
 ---
 
-## Database Design
+# Database Design
 
-    User
-      |
-      |
-    Cart
-      |
-      |
-    CartItem
-      |
-      |
-    Product
+```
+User
+ |
+Cart
+ |
+CartItem
+ |
+Product
+```
 
-
-    User
-      |
-      |
-    Order
-      |
-      |
-    OrderItem
-      |
-      |
-    Payment
-
+```
+User
+ |
+Order
+ |
+OrderItem
+ |
+Payment
+```
 
 ---
 
-## API Workflow
+# API Workflow
 
-    Register
-       |
-    Login
-       |
-    Browse Products
-       |
-    Add To Cart
-       |
-    Create Order
-       |
-    Payment
-       |
-    Completed Purchase
+```
+Register
+   |
+Login
+   |
+Browse Products
+   |
+Add To Cart
+   |
+Create Order
+   |
+Payment
+   |
+Completed Purchase
+```
 
 ---
 
-## About This Project
+# About This Project
 
 This is my first backend project built with FastAPI.
 
-Through this project, I practiced designing a real-world backend architecture, working with databases, authentication, authorization, testing, and building complete business workflows.
+Through this project, I practiced building a real-world backend system including:
 
-During development, I used different learning resources and tools to improve my understanding and solve problems. My goal was not only to complete the project, but also to understand the concepts behind each part and improve my backend engineering skills.
+* REST API design
+* Database modeling
+* Authentication and authorization
+* Business logic implementation
+* Automated testing
+* Docker-based development workflow
 
-This project represents the beginning of my backend development journey, and I look forward to building more advanced systems and improving my skills in future projects.
+The main goal of this project was to understand backend engineering concepts by building a complete application from the ground up.
+
+This project is the beginning of my backend development journey, and I will continue improving my skills by building more advanced systems and exploring production-level practices.
 
 ---
 
 ## Author
 
-Backend Developer
+Mohamadreza Khosh Niat
+
+Backend Developer | Python | FastAPI
+
+GitHub: https://github.com/mohamadreza1992 
+LinkedIn: https://www.linkedin.com/in/mohamadreza-khosh-niat-91b964366/
