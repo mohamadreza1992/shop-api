@@ -5,13 +5,14 @@ from sqlalchemy.orm import Session
 from app.dependencies.db import get_db
 from app.schemas.product import ProductCreate , ProductResponse,MessageResponse,ProductUpdate,ProductListResponse
 from app.services import product_service
-
+from app.dependencies.permissions import require_admin
 router = APIRouter(
     prefix="/products",
     tags=["products"]
 )
 @router.post("/",
-             response_model=ProductResponse
+             response_model=ProductResponse,
+             dependencies=[Depends(require_admin)]
              )
 def create_product(
     product: ProductCreate,
@@ -64,7 +65,8 @@ def get_product(
 
 
 @router.put("/{product_id}",
-            response_model=ProductResponse)
+            response_model=ProductResponse,
+            dependencies=[Depends(require_admin)])
 def update_product(
     product_id: int,
     product: ProductUpdate,
@@ -86,7 +88,8 @@ def update_product(
 
 
 @router.delete("/{product_id}",
-               response_model=MessageResponse
+               response_model=MessageResponse,
+               dependencies=[Depends(require_admin)]
                )
 def delete_product(
     product_id: int,

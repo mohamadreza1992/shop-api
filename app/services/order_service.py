@@ -96,3 +96,34 @@ def get_order_by_id(
         order_not_found()
 
     return order
+
+
+
+def get_all_orders(
+    db: Session
+) -> list[Order]:
+
+    orders = db.query(Order).all()
+
+    return orders
+
+
+def update_order_status(
+    db: Session,
+    order_id: int,
+    status: str
+) -> Order:
+
+    order = db.query(Order).filter(
+        Order.id == order_id
+    ).first()
+
+    if not order:
+        order_not_found()
+
+    order.status = status
+
+    db.commit()
+    db.refresh(order)
+
+    return order

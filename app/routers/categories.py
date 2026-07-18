@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.dependencies.db import get_db
 from app.schemas.category import CategoryCreate, CategoryResponse, MessageResponse
 from app.services import category_service
-
+from app.dependencies.permissions import require_admin
 
 router = APIRouter(
     prefix="/categories",
@@ -14,7 +14,8 @@ router = APIRouter(
 
 @router.post(
     "/",
-    response_model=CategoryResponse
+    response_model=CategoryResponse,
+    dependencies=[Depends(require_admin)]
 )
 def create_category(
     category: CategoryCreate,
@@ -60,7 +61,8 @@ def get_category(
 
 @router.delete(
     "/{category_id}",
-    response_model=MessageResponse
+    response_model=MessageResponse,
+    dependencies=[Depends(require_admin)]
 )
 def delete_category(
     category_id: int,
