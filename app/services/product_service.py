@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
+from decimal import Decimal
 
 from app.models.product import Product
-from app.schemas.product import ProductCreate
-from decimal import Decimal
+from app.schemas.product import ProductCreate, ProductUpdate
 
 
 def create_product(
@@ -23,6 +23,7 @@ def create_product(
     return new_product
 
 
+
 def get_products(
     db: Session,
     page: int,
@@ -35,29 +36,36 @@ def get_products(
 
     query = db.query(Product)
 
+
     if search:
         query = query.filter(
             Product.name.ilike(f"%{search}%")
         )
 
-    if category_id:
+
+    if category_id is not None:
         query = query.filter(
             Product.category_id == category_id
-        )    
+        )
+
 
     if min_price is not None:
         query = query.filter(
             Product.price >= min_price
         )
 
+
     if max_price is not None:
         query = query.filter(
             Product.price <= max_price
-        )    
+        )
+
 
     total = query.count()
 
+
     offset = (page - 1) * limit
+
 
     products = (
         query
@@ -66,12 +74,14 @@ def get_products(
         .all()
     )
 
+
     return {
         "items": products,
         "total": total,
         "page": page,
         "limit": limit
     }
+
 
 
 def get_product(
@@ -86,6 +96,49 @@ def get_product(
     )
 
 
+
+def update_product(
+    db: Session,
+    product_id: int,
+    product_data: ProductUpdate
+):
+
+    product = (
+        db.query(Product)
+        .filter(Product.id == product_id)
+        .first()
+    )
+
+
+    if not product:
+        return None
+
+
+
+    if product_data.name is not None:
+        product.name = product_data.name
+
+
+    if product_data.price is not None:
+        product.price = product_data.price
+
+
+    if product_data.stock is not None:
+        product.stock = product_data.stock
+
+
+    if product_data.category_id is not None:
+        product.category_id = product_data.category_id
+
+
+
+    db.commit()
+    db.refresh(product)
+
+    return product
+
+
+
 def delete_product(
     db: Session,
     product_id: int
@@ -97,35 +150,12 @@ def delete_product(
         .first()
     )
 
-    if product:
-        db.delete(product)
-        db.commit()
-        return True
 
-    return False
+    if not product:
+        return False
 
 
-def update_product(
-    db: Session,
-    product_id: int,
-    product_data: ProductCreate
-):
+    db.delete(product)
+    db.commit()
 
-    product = (
-        db.query(Product)
-        .filter(Product.id == product_id)
-        .first()
-    )
-
-    if product:
-        product.name = product_data.name
-        product.price = product_data.price
-        product.stock = product_data.stock
-        product.category_id = product_data.category_id
-
-        db.commit()
-        db.refresh(product)
-
-        return product
-
-    return None
+    return True

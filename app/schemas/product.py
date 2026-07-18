@@ -35,6 +35,7 @@ class ProductUpdate(BaseModel):
     )
     price: Decimal | None = Field(default=None,gt=0)
     stock: int | None = Field(default=None,ge=0)
+    category_id: int | None = None
 
 
 class ProductListResponse(BaseModel):
