@@ -1,60 +1,60 @@
 # Shop API
 
-A RESTful e-commerce backend API built with FastAPI and PostgreSQL.
+A production-oriented RESTful e-commerce backend API built with **FastAPI**, **PostgreSQL**, and **Docker**.
 
-This project implements a complete shopping workflow including authentication, products, categories, cart, orders, and payments.
+This project provides a complete shopping workflow with authentication, product management, shopping cart, order processing, and payment handling.
+
+The goal of this project was to design and implement a scalable backend architecture following clean separation of responsibilities and real-world development practices.
 
 ---
 
 # Features
 
-## Authentication
+## Authentication & Authorization
 
-* User registration
-* User login with JWT
-* Password hashing
-* Current user profile
+* User registration and login
+* JWT-based authentication
+* Secure password hashing
+* User profile management
 * Role-based authorization
-* Admin protected routes
+* Protected admin routes
 
-## Products
+## Product Management
 
-* Create products
-* Update products
-* Delete products
+* Create, update, and delete products
 * Product listing
 * Pagination
-* Search
+* Search functionality
 * Category filtering
 * Price filtering
 
-## Categories
+## Category Management
 
 * Create categories
 * List categories
-* Get category details
-* Delete categories
+* Category details
+* Category deletion
 
 ## Shopping Cart
 
-* Create user cart
-* Add items
-* Update quantity
-* Remove items
-* View cart
+* Create user carts
+* Add products to cart
+* Update item quantities
+* Remove cart items
+* View cart summary
 
-## Orders
+## Order Management
 
-* Create order from cart
+* Create orders from cart items
 * View user orders
-* Get order details
+* Order details
 * Order status management
 
-## Payments
+## Payment System
 
-* Create payment
-* Payment status handling
-* Update order after payment
+* Create payments
+* Track payment status
+* Update order status after payment
 
 ---
 
@@ -70,6 +70,49 @@ This project implements a complete shopping workflow including authentication, p
 * Pytest
 * Docker
 * Docker Compose
+
+---
+
+# Project Architecture
+
+The project follows a layered architecture:
+
+```
+                Client
+
+                  |
+                  |
+
+               Router
+
+                  |
+
+               Service
+
+                  |
+
+                Model
+
+                  |
+
+              Database
+```
+
+### Router Layer
+
+Responsible for handling HTTP requests, validation, and responses.
+
+### Service Layer
+
+Contains business logic and application rules.
+
+### Model Layer
+
+Defines database entities and relationships.
+
+### Schema Layer
+
+Handles data validation and serialization.
 
 ---
 
@@ -89,17 +132,17 @@ app/
 tests/
 
 alembic/
-docker-compose.yml
+
 Dockerfile
+
+docker-compose.yml
 ```
 
 ---
 
-# Running With Docker (Recommended)
+# Running With Docker
 
-Make sure Docker is installed.
-
-Clone repository:
+Clone the repository:
 
 ```bash
 git clone <repository-url>
@@ -111,9 +154,7 @@ Create environment file:
 cp .env.example .env
 ```
 
-Configure your database and application settings inside `.env`.
-
-Build and start containers:
+Start the application:
 
 ```bash
 docker compose up --build
@@ -125,13 +166,13 @@ Run in background:
 docker compose up -d
 ```
 
-The API will be available at:
+API:
 
 ```
 http://localhost:8000
 ```
 
-Swagger documentation:
+Swagger Documentation:
 
 ```
 http://localhost:8000/docs
@@ -139,39 +180,11 @@ http://localhost:8000/docs
 
 ---
 
-# Docker Commands
+# Environment Configuration
 
-Stop containers:
+Create a `.env` file:
 
-```bash
-docker compose down
-```
-
-Stop and remove database volume:
-
-```bash
-docker compose down -v
-```
-
-View running containers:
-
-```bash
-docker ps
-```
-
-View logs:
-
-```bash
-docker compose logs
-```
-
----
-
-# Environment Variables
-
-Create `.env` file:
-
-```
+```env
 DATABASE_URL=postgresql://username:password@postgres:5432/shop
 
 TEST_DATABASE_URL=postgresql://username:password@postgres:5432/shop_test_db
@@ -187,7 +200,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 # Database Migration
 
-Run migrations:
+Apply migrations:
 
 ```bash
 docker compose exec api alembic upgrade head
@@ -195,110 +208,18 @@ docker compose exec api alembic upgrade head
 
 ---
 
-# Local Installation (Without Docker)
-
-Create virtual environment:
-
-```bash
-python -m venv .venv
-```
-
-Activate:
-
-Linux:
-
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Run application:
-
-```bash
-uvicorn app.main:app --reload
-```
-
----
-
 # Testing
 
-Run tests inside Docker:
+Run tests:
 
 ```bash
 docker compose exec api pytest
 ```
 
-Run locally:
-
-```bash
-pytest
-```
-
-Current status:
+Current test status:
 
 ```
 25 tests passed
-```
-
----
-
-# Architecture
-
-This project follows a layered architecture:
-
-```
-Router
-   |
-Service
-   |
-Model
-   |
-Database
-```
-
-### Router
-
-Handles HTTP requests and responses.
-
-### Service
-
-Contains business logic and application rules.
-
-### Model
-
-Represents database tables.
-
-### Schema
-
-Handles request validation and response serialization.
-
----
-
-# Database Design
-
-```
-User
- |
-Cart
- |
-CartItem
- |
-Product
-```
-
-```
-User
- |
-Order
- |
-OrderItem
- |
-Payment
 ```
 
 ---
@@ -323,11 +244,61 @@ Completed Purchase
 
 ---
 
-# About This Project
+# Database Relationships
 
-This is my first backend project built with FastAPI.
+```
+User
+ |
+ +---- Cart
+ |       |
+ |       +---- CartItem
+ |                |
+ |                +---- Product
+ |
+ +---- Order
+         |
+         +---- OrderItem
+                  |
+                  +---- Product
 
-Through this project, I practiced building a real-world backend system including:
+Order
+ |
+ Payment
+```
+
+---
+
+# Security
+
+Implemented security features:
+
+* JWT authentication
+* Password hashing
+* Protected routes
+* Role-based permissions
+* Environment-based configuration
+
+---
+
+# Future Improvements
+
+Planned improvements:
+
+* Redis caching
+* Background tasks
+* CI/CD pipeline
+* API versioning
+* Rate limiting
+* Production deployment
+* Monitoring and logging
+
+---
+
+# About
+
+This project was built to practice backend engineering concepts by creating a complete e-commerce system.
+
+Through this project, I gained practical experience with:
 
 * REST API design
 * Database modeling
@@ -336,17 +307,16 @@ Through this project, I practiced building a real-world backend system including
 * Automated testing
 * Docker-based development workflow
 
-The main goal of this project was to understand backend engineering concepts by building a complete application from the ground up.
-
-This project is the beginning of my backend development journey, and I will continue improving my skills by building more advanced systems and exploring production-level practices.
-
 ---
 
 ## Author
 
-Mohamadreza Khosh Niat
+**Mohamadreza Khosh Niat**
 
 Backend Developer | Python | FastAPI
 
-GitHub: https://github.com/mohamadreza1992 
-LinkedIn: https://www.linkedin.com/in/mohamadreza-khosh-niat-91b964366/
+GitHub:
+https://github.com/mohamadreza1992
+
+LinkedIn:
+https://www.linkedin.com/in/mohamadreza-khosh-niat-91b964366/
